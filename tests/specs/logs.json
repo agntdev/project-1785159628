@@ -1,0 +1,20 @@
+[
+  {
+    "name": "/logs",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "View detailed activity log of view generation events"
+            }
+          }
+        ],
+        "send": {
+          "text": "/logs"
+        }
+      }
+    ]
+  }
+]
