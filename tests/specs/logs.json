@@ -1,20 +1,10 @@
 [
   {
-    "name": "/logs",
+    "name": "Activity log gives a useful empty state",
     "steps": [
-      {
-        "expect": [
-          {
-            "method": "sendMessage",
-            "payload": {
-              "text": "View detailed activity log of view generation events"
-            }
-          }
-        ],
-        "send": {
-          "text": "/logs"
-        }
-      }
+      { "send": { "callback": "logs:show" }, "expect": [
+        { "method": "editMessageText", "payload": { "text": "No activity yet — add a sub-bot or register a channel to get started." } }
+      ] }
     ]
   }
 ]

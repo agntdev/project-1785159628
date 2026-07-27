@@ -1,20 +1,10 @@
 [
   {
-    "name": "/registerchannel",
+    "name": "Register channel requests its address",
     "steps": [
-      {
-        "expect": [
-          {
-            "method": "sendMessage",
-            "payload": {
-              "text": "Register a channel/group where sub-bots should monitor posts"
-            }
-          }
-        ],
-        "send": {
-          "text": "/registerchannel"
-        }
-      }
+      { "send": { "callback": "channels:add" }, "expect": [
+        { "method": "editMessageText", "payload": { "text": "Send the channel or group @username, or its numeric chat ID." } }
+      ] }
     ]
   }
 ]

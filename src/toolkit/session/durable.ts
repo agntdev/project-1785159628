@@ -83,6 +83,27 @@ export function createDurableSessionStorage<T>(env: WorkerEnv): StorageAdapter<T
 }
 
 /**
+ * Durable key/value storage for domain records. This deliberately uses a
+ * different DO endpoint from grammY session storage, so durable business data
+ * never shares or overwrites a conversation session.
+ */
+export function createDurableDomainStorage<T>(env: WorkerEnv): StorageAdapter<T> {
+  const stub = (key: string): DOStub => env.CHAT_DO.get(env.CHAT_DO.idFromName("data:" + key));
+  return {
+    async read(key: string): Promise<T | undefined> {
+      const response = await stub(key).fetch("https://do/data", { method: "GET" });
+      return response.status === 204 ? undefined : await response.json() as T;
+    },
+    async write(key: string, value: T): Promise<void> {
+      await stub(key).fetch("https://do/data", { method: "PUT", body: JSON.stringify(value) });
+    },
+    async delete(key: string): Promise<void> {
+      await stub(key).fetch("https://do/data", { method: "DELETE" });
+    },
+  };
+}
+
+/**
  * remindAt — schedule a one-shot reminder DM for `chatId` at `whenEpochMs`.
  * Backed by the chat's ChatDO alarm; fires within a millisecond of the target
  * even if the Worker was idle. Call from a handler under the Workers runtime
@@ -140,6 +161,21 @@ export class ChatDO {
       }
       if (request.method === "DELETE") {
         await this.state.storage.delete("session");
+        return new Response(null, { status: 204 });
+      }
+    }
+
+    if (url.pathname === "/data") {
+      if (request.method === "GET") {
+        const v = await this.state.storage.get<unknown>("data");
+        return v === undefined ? new Response(null, { status: 204 }) : Response.json(v);
+      }
+      if (request.method === "PUT") {
+        await this.state.storage.put("data", await request.json());
+        return new Response(null, { status: 204 });
+      }
+      if (request.method === "DELETE") {
+        await this.state.storage.delete("data");
         return new Response(null, { status: 204 });
       }
     }

@@ -14,6 +14,8 @@ import { webhookCallback, Composer, type Bot } from "grammy";
 import { buildBot, type Ctx } from "./bot.js";
 import { handlers } from "./handlers.generated.js";
 import { createDurableSessionStorage, type WorkerEnv } from "./toolkit/session/durable.js";
+import { createDurableDomainStorage } from "./toolkit/session/durable.js";
+import { configureDomainStorage } from "./viewbot-data.js";
 
 export { ChatDO } from "./toolkit/session/durable.js";
 
@@ -30,6 +32,7 @@ let botPromise: Promise<Bot<Ctx>> | null = null;
 function getBot(env: WorkerEnv): Promise<Bot<Ctx>> {
   if (!botPromise) {
     botPromise = (async () => {
+      configureDomainStorage(createDurableDomainStorage(env));
       // Expose the runtime env to handlers (Workers-only; the harness never sets
       // it) BEFORE they run — a handler reaches bindings + helpers through it
       // (remindAt(ctx.env, …), ctx.env.DB). buildBot installs `handlers` in array
