@@ -1,0 +1,20 @@
+[
+  {
+    "name": "/registerchannel",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Register a channel/group where sub-bots should monitor posts"
+            }
+          }
+        ],
+        "send": {
+          "text": "/registerchannel"
+        }
+      }
+    ]
+  }
+]
