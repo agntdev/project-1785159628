@@ -1,20 +1,13 @@
 [
   {
-    "name": "/addbot",
+    "name": "Add sub-bot opens a secure token flow",
     "steps": [
-      {
-        "expect": [
-          {
-            "method": "sendMessage",
-            "payload": {
-              "text": "Add a new sub-bot with token and optional name"
-            }
-          }
-        ],
-        "send": {
-          "text": "/addbot"
-        }
-      }
+      { "send": { "callback": "bots:add", "userId": 77 }, "expect": [
+        { "method": "editMessageText", "payload": { "text": "Send the token for the sub-bot you want to add." } }
+      ] },
+      { "send": { "text": "not-a-token", "userId": 77 }, "expect": [
+        { "method": "sendMessage", "payload": { "text": "That token isn't valid. Create or copy a token from BotFather, then try again." } }
+      ] }
     ]
   }
 ]

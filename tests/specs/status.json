@@ -1,20 +1,10 @@
 [
   {
-    "name": "/status",
+    "name": "Status gives a useful empty state",
     "steps": [
-      {
-        "expect": [
-          {
-            "method": "sendMessage",
-            "payload": {
-              "text": "Show active sub-bots and view statistics"
-            }
-          }
-        ],
-        "send": {
-          "text": "/status"
-        }
-      }
+      { "send": { "callback": "status:show" }, "expect": [
+        { "method": "editMessageText", "payload": { "text": "Nothing is connected yet — add a sub-bot, then register a channel." } }
+      ] }
     ]
   }
 ]
